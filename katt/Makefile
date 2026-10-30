@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -std=c23 -Wall -Wextra -Wpedantic -Wconversion -g -fsanitize=address,undefined
 
-katt: katt.c
-	$(CC) $(CFLAGS) -o $@ $<
+katt: katt.c ../lib/io.c ../lib/io.h
+	$(CC) $(CFLAGS) -o $@ katt.c ../lib/io.c
 
 run: katt
 	./katt $@
