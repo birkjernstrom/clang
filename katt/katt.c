@@ -11,13 +11,17 @@ int main(int argc, char *argv[])
   if (filename != NULL) {
     fp = fopen(filename, "r");
   } else {
+    filename = "STDIN";
     fp = stdin;
   }
 
-  char *line;
-  while ((line = readline(fp)) != NULL) {
-    printf("%s\n", line);
-    free(line);
+  fline line;
+  int lineno = 1;
+  printf("═ Filename: %s\n", filename);
+  while ((line = readline(fp)).buffer != NULL) {
+    printf("%-5d │ %-5d │ %s\n", lineno, line.length, line.buffer);
+    free(line.buffer);
+    lineno++;
   }
   fclose(fp);
   return 0;

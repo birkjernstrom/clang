@@ -3,6 +3,11 @@
 
 #include <stdio.h>
 
-char *readline(FILE *fp);
+typedef struct {
+  char *buffer;
+  int length;
+} fline;
+
+fline readline(FILE *fp);
 
 #endif

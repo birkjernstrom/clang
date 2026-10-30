@@ -1,45 +1,49 @@
 #include <stdlib.h>
 #include "io.h"
 
-char *readline(FILE *fp)
+fline readline(FILE *fp)
 {
+  fline ret; 
+  ret.length = 0;
   int offset = 0;
   int bufsize = 64;
-  char *buffer;
   int c;
 
-  buffer = malloc(bufsize);
-  if (buffer == NULL) {
-    return NULL;
+  ret.buffer = malloc(bufsize);
+  if (ret.buffer == NULL) {
+    return ret;
   }
 
   while ((c = fgetc(fp)) != EOF && c != '\n') {
     if (offset == bufsize - 1) {
       bufsize *= 2;
-      char *newbuf = realloc(buffer, bufsize);
+      char *newbuf = realloc(ret.buffer, bufsize);
       if (newbuf == NULL) {
-        free(buffer);
-        return NULL;
+        free(ret.buffer);
+        ret.buffer = NULL;
+        return ret;
       }
-      buffer = newbuf;
+      ret.buffer = newbuf;
     }
 
-    buffer[offset++] = (char)c;
+    ret.buffer[offset++] = (char)c;
+    ret.length++;
   }
 
   // Empty file
   if (c == EOF && offset == 0) {
-    free(buffer);
-    return NULL;
+    free(ret.buffer);
+    ret.buffer = NULL;
+    return ret;
   }
 
   if (offset < bufsize - 1) {
-    char *newbuf = realloc(buffer, offset + 1);
+    char *newbuf = realloc(ret.buffer, offset + 1);
     if (newbuf != NULL) {
-      buffer = newbuf;
+      ret.buffer = newbuf;
     }
   }
 
-  buffer[offset] = '\0';
-  return buffer;
+  ret.buffer[offset] = '\0';
+  return ret;
 }
