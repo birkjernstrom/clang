@@ -3,19 +3,39 @@
 .text
 
 _start:
-  lea rdi, [filename]
+  mov rcx, [rsp]
+  cmp rcx, 1
+  ;# No filename given. Default to STDIN.
+  je _print_stdin
+
+  mov rdi, [rsp+16]
+  call _print_file
+  jmp _exit
+
+_print_stdin:
+  mov rdi, 0
+  call _read_file
+  ;# Print buffer from read
+  lea rdi, [buffer]
+  call _print
+
+_print_file:
   call _fopen
 
   ;# Read
   mov rdi, rax
-  lea rsi, [buffer]
-  mov rdx, 4096
-  xor rax, rax
-  syscall
+  call _read_file
 
   ;# Print buffer from read
   lea rdi, [buffer]
   call _print
+
+_read_file:
+  lea rsi, [buffer]
+  mov rdx, 4096
+  xor rax, rax
+  syscall
+  ret
 
 _exit:
   mov rax, 60
